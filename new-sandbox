@@ -54,6 +54,8 @@ include globals.local
 # generic gui profile
 # depending on your usage, you can enable some of the commands below:
 
+noblacklist \${HOME}/.config/openbox
+
 include disable-common.inc
 # include disable-devel.inc
 # include disable-interpreters.inc
