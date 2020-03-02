@@ -25,8 +25,8 @@ fi
 
 SANDBOX_HOME="$SANDBOX_ROOT/$PROFILE_NAME"
 if [ -d "$SANDBOX_HOME" ]; then
-    echo "$SANBOX_HOME already exists."
-    exit -1
+    echo "$SANDBOX_HOME already exists."
+    exit 1
 fi
 
 mkdir "$SANDBOX_HOME"
@@ -40,7 +40,7 @@ fi
 FJ_PROFILE="$FJ_CONFIG/$PROFILE_NAME.profile"
 if [ -f "$FJ_PROFILE" ]; then
     echo "$FJ_PROFILE already exists."
-    exit -1
+    exit 1
 fi
 
 cat > "$FJ_PROFILE" << EOF
@@ -112,7 +112,7 @@ fi
 PROFILE_SCRIPT="$BIN_DIR/start-$PROFILE_NAME"
 if [ -f "$PROFILE_SCRIPT" ]; then
     echo "$PROFILE_SCRIPT already exists."
-    exit -1
+    exit 1
 fi
 
 cat > "$PROFILE_SCRIPT" << EOF
