@@ -95,7 +95,12 @@ machine-id
 hostname $PROFILE_NAME
 
 private \${HOME}/sandboxes/$PROFILE_NAME
-whitelist \${RUNUSER}/*
+
+# /run/user/USERID is used for a lot of IPC - VSCodium being the chief example.
+# Whitelisting some random file in this directory will cause the sandbox to see
+# an empty directory. If some program inside the sandbox ever writes to this
+# directory, those files will only be visible to the sandbox.
+whitelist \${RUNUSER}/__not-used__
 
 # X11 sandboxing should always come last
 xephyr-screen 1480x924
