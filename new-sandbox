@@ -146,4 +146,18 @@ chmod u+x "$PROFILE_SCRIPT"
 
 echo "Created $PROFILE_SCRIPT"
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+HOOK_DIR="$SCRIPT_DIR/hooks"
+
+if [ -f "$HOOK_DIR/post-create.sh" ]; then
+    "$HOOK_DIR/post-create.sh" "$PROFILE_NAME"
+fi
+
+echo ""
+echo "-------------------------------------------------------------"
+echo ""
+echo "Profile created successfully."
 echo "Run start-$PROFILE_NAME to start the sandbox."
+echo ""
+echo "-------------------------------------------------------------"
+echo ""
