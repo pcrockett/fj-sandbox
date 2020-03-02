@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+# This script is based on the template here:
+#
+#     https://gist.github.com/pcrockett/8e04641f8473081c3a93de744873f787
+#
+# Useful links when writing a script:
+#
+# Shellcheck: https://github.com/koalaman/shellcheck
+# vscode-shellcheck: https://github.com/timonwong/vscode-shellcheck
+# https://blog.yossarian.net/2020/01/23/Anybody-can-write-good-bash-with-a-little-effort
+#
+
+# https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+
+[[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
+
+PROFILE_NAME="$1"
+
+SANDBOX_ROOT=~/sandboxes
+if [ ! -d "$SANDBOX_ROOT" ]; then
+    mkdir "$SANDBOX_ROOT"
+fi
+
+SANDBOX_HOME="$SANDBOX_ROOT/$PROFILE_NAME"
+if [ -d "$SANDBOX_HOME" ]; then
+    echo "$SANBOX_HOME already exists."
+    exit -1
+fi
+
+mkdir "$SANDBOX_HOME"
+echo "Created $SANDBOX_HOME"
+
+FJ_CONFIG=~/.config/firejail
+if [ ! -d "$FJ_CONFIG" ]; then
+    mkdir "$FJ_CONFIG"
+fi
+
+FJ_PROFILE="$FJ_CONFIG/$PROFILE_NAME.profile"
+if [ -f "$FJ_PROFILE" ]; then
+    echo "$FJ_PROFILE already exists."
+    exit -1
+fi
+
+cat > "$FJ_PROFILE" << EOF
+# Copy/paste/modified from firejail's default.profile
+
+# Persistent local customizations
+include default.local
+# Persistent global definitions
+include globals.local
+
+# generic gui profile
+# depending on your usage, you can enable some of the commands below:
+
+include disable-common.inc
+# include disable-devel.inc
+# include disable-interpreters.inc
+include disable-passwdmgr.inc
+# include disable-programs.inc
+# include disable-xdg.inc
+
+caps.drop all
+ipc-namespace
+netfilter
+no3d
+nodbus
+nodvd
+nogroups
+nonewprivs
+noroot
+# nosound
+notv
+# nou2f
+# novideo
+protocol unix,inet,inet6
+seccomp
+# shell none
+
+disable-mnt
+# private
+# private-bin program
+private-cache
+private-dev
+# private-etc none
+# private-lib
+private-tmp
+
+# memory-deny-write-execute
+# noexec /home/phil
+noexec /tmp
+
+machine-id
+hostname $PROFILE_NAME
+
+private \${HOME}/sandboxes/$PROFILE_NAME
+whitelist \${RUNUSER}/*
+
+# X11 sandboxing should always come last
+xephyr-screen 1480x924
+x11
+EOF
+
+echo "Created $FJ_PROFILE"
+
+BIN_DIR=~/.local/bin
+if [ ! -d "$BIN_DIR" ]; then
+    mkdir "$BIN_DIR"
+fi
+
+PROFILE_SCRIPT="$BIN_DIR/start-$PROFILE_NAME"
+if [ -f "$PROFILE_SCRIPT" ]; then
+    echo "$PROFILE_SCRIPT already exists."
+    exit -1
+fi
+
+cat > "$PROFILE_SCRIPT" << EOF
+#!/usr/bin/env bash
+
+# This script is based on the template here:
+#
+#     https://gist.github.com/pcrockett/8e04641f8473081c3a93de744873f787
+#
+# Useful links when writing a script:
+#
+# Shellcheck: https://github.com/koalaman/shellcheck
+# vscode-shellcheck: https://github.com/timonwong/vscode-shellcheck
+# https://blog.yossarian.net/2020/01/23/Anybody-can-write-good-bash-with-a-little-effort
+#
+
+# https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+
+[[ "\${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
+
+firejail "--profile=$PROFILE_NAME" "--name=$PROFILE_NAME" openbox &
+EOF
+
+chmod u+x "$PROFILE_SCRIPT"
+
+echo "Created $PROFILE_SCRIPT"
+
+echo "Run start-$PROFILE_NAME to start the sandbox."
