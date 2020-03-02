@@ -35,12 +35,12 @@ This runs an instance of openbox for both the _personal_ and _work_ sandboxes, w
 * Right-click anywhere in the openbox window and use the menu
 * Run `firejail --join=<sandbox-name> <app>` (for example, `firejail --join=personal firefox`)
 
-Each sandbox has a dedicated home directory found at `~/sandboxes/<sandbox-nam>`. Moving files between sandboxes is as easy as moving the file from one directory to another.
+Each sandbox has a dedicated home directory found at `~/sandboxes/<sandbox-name>`. Moving files between sandboxes is as easy as moving the file from one directory to another.
 
 Customizing Sandboxes
 ---------------------
 
-I am pretty new to Firejail, and certainly no Linux expert. After creating a new sandbox, you should take a look at the new Firejail profiles at `~/.config/firejail/<sandbox-name>.profile`. Adjust it to meet your needs. If you see any way to improve these default profiles, please send a pull request!
+I am pretty new to Firejail, and certainly no Linux expert. After creating a new sandbox, you should take a look at the new Firejail profile at `~/.config/firejail/<sandbox-name>.profile`. Adjust it to meet your needs. If you see any way to improve these default profiles, please send a pull request!
 
 [1]: https://www.qubes-os.org/
 [2]: install.sh
