@@ -79,6 +79,7 @@ notv
 protocol unix,inet,inet6
 seccomp
 # shell none
+rmenv SESSION_MANAGER
 
 disable-mnt
 # private
