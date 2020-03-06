@@ -92,6 +92,7 @@ private-tmp
 # memory-deny-write-execute
 # noexec /home/phil
 noexec /tmp
+read-only /nix
 
 machine-id
 hostname $PROFILE_NAME
