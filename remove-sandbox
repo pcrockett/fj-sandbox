@@ -22,7 +22,7 @@ PROFILE_NAME="$1"
 
 SANDBOX_ROOT=~/sandboxes
 if [ -d "$SANDBOX_ROOT" ]; then
-    rm -r "${SANDBOX_ROOT:?}/$PROFILE_NAME" || true
+    rm -rf "${SANDBOX_ROOT:?}/$PROFILE_NAME" || true
 fi
 
 FJ_CONFIG=~/.config/firejail
@@ -33,4 +33,10 @@ fi
 BIN_DIR=~/.local/bin
 if [ -d "$BIN_DIR" ]; then
     rm "$BIN_DIR/start-$PROFILE_NAME" || true
+fi
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+HOOK_DIR="$SCRIPT_DIR/hooks"
+if [ -f "$HOOK_DIR/post-destroy.sh" ]; then
+    "$HOOK_DIR/post-destroy.sh" "$PROFILE_NAME"
 fi

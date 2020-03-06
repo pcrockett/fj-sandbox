@@ -45,9 +45,8 @@ I am pretty new to Firejail, and certainly no Linux expert. After creating a new
 Hooks
 -----
 
-Right now there's support for only one hook: A [post-create hook][4]. This hook is an optional script that automatically gets called after you create a new sandbox. It allows you to customize how sandboxes are initialized. For example, you could set up a default Firefox profile, or SSH settings, etc.
+There are a couple hook script templates in the hooks directory. These enable you to automatically initialize any new sandboxes you create, and clean things up when sandboxes are destroyed.
 
 [1]: https://www.qubes-os.org/
 [2]: install.sh
 [3]: new-sandbox
-[4]: hooks/post-create.sh.template
