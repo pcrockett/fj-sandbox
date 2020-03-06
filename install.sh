@@ -23,6 +23,7 @@ if [ ! -d "$BIN_DIR" ]; then
     mkdir "$BIN_DIR"
 fi
 
-ln -s "$SCRIPT_DIR/new-sandbox" "$BIN_DIR/new-sandbox"
+ln -s "$SCRIPT_DIR/new-sandbox" "$BIN_DIR/new-sandbox" || true
+ln -s "$SCRIPT_DIR/remove-sandbox" "$BIN_DIR/remove-sandbox" || true
 
 echo "Run \"new-sandbox <sandbox-name>\" to create new sandboxes."
