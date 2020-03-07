@@ -11,6 +11,7 @@ Dependencies
 * Firejail
 * Openbox (for x11 sandboxing)
 * Xephyr (for x11 sandboxing)
+* xsel (for sharing clipboard contents between sandboxes)
 
 Install
 -------
@@ -36,6 +37,19 @@ This runs an instance of openbox for both the _personal_ and _work_ sandboxes, w
 * Run `firejail --join=<sandbox-name> <app>` (for example, `firejail --join=personal firefox`)
 
 Each sandbox has a dedicated home directory found at `~/sandboxes/<sandbox-name>`. Moving files between sandboxes is as easy as moving the file from one directory to another.
+
+You can also share clipboards between sandboxes. In a host (non-sandboxed) terminal:
+
+```bash
+# Move "personal" clipboard to "work" clipboard:
+mv-clipboard personal work
+
+# Move "personal" clipboard to host clipboard
+get-clipboard personal | xsel --clipboard
+
+# Copy host clipboard to "personal" clipboard
+xsel --clipboard | set-clipboard personal
+```
 
 Customizing Sandboxes
 ---------------------
