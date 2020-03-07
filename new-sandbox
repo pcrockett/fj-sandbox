@@ -17,13 +17,23 @@ set -Eeuo pipefail
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
 PROFILE_NAME="$1"
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-SANDBOX_ROOT=~/sandboxes
-if [ ! -d "$SANDBOX_ROOT" ]; then
-    mkdir "$SANDBOX_ROOT"
+DEFAULT_CONFIG="$SCRIPT_DIR/default-config.sh"
+# shellcheck source=/dev/null
+. "$DEFAULT_CONFIG"
+
+USER_CONFIG="$SCRIPT_DIR/user-config.sh"
+if [ -e "$USER_CONFIG" ]; then
+    # shellcheck source=/dev/null
+    . "$USER_CONFIG"
 fi
 
-SANDBOX_HOME="$SANDBOX_ROOT/$PROFILE_NAME"
+if [ ! -d "$FJSB_SANDBOX_ROOT" ]; then
+    mkdir "$FJSB_SANDBOX_ROOT"
+fi
+
+SANDBOX_HOME="$FJSB_SANDBOX_ROOT/$PROFILE_NAME"
 if [ -d "$SANDBOX_HOME" ]; then
     echo "$SANDBOX_HOME already exists."
     exit 1
@@ -107,7 +117,7 @@ private \${HOME}/sandboxes/$PROFILE_NAME
 whitelist \${RUNUSER}/__not-used__
 
 # X11 sandboxing should always come last
-xephyr-screen 1480x924
+xephyr-screen $FJSB_SCREEN_SIZE
 x11
 EOF
 
@@ -150,7 +160,6 @@ chmod u+x "$PROFILE_SCRIPT"
 
 echo "Created $PROFILE_SCRIPT"
 
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 HOOK_DIR="$SCRIPT_DIR/hooks"
 
 if [ -f "$HOOK_DIR/post-create.sh" ]; then
