@@ -18,12 +18,13 @@ set -Eeuo pipefail
 
 PROFILE_NAME="$1"
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+REPO_DIR=$(dirname "$SCRIPT_DIR")
 
-DEFAULT_CONFIG="$SCRIPT_DIR/default-config.sh"
+DEFAULT_CONFIG="$REPO_DIR/default-config.sh"
 # shellcheck source=/dev/null
 . "$DEFAULT_CONFIG"
 
-USER_CONFIG="$SCRIPT_DIR/user-config.sh"
+USER_CONFIG="$REPO_DIR/user-config.sh"
 if [ -e "$USER_CONFIG" ]; then
     # shellcheck source=/dev/null
     . "$USER_CONFIG"
@@ -102,7 +103,7 @@ private-tmp
 
 # memory-deny-write-execute
 # noexec /home/phil
-noexec /tmp
+# noexec /tmp
 read-only /nix
 
 machine-id
@@ -161,7 +162,7 @@ chmod u+x "$PROFILE_SCRIPT"
 
 echo "Created $PROFILE_SCRIPT"
 
-HOOK_DIR="$SCRIPT_DIR/hooks"
+HOOK_DIR="$REPO_DIR/hooks"
 
 if [ -f "$HOOK_DIR/post-create.sh" ]; then
     "$HOOK_DIR/post-create.sh" "$PROFILE_NAME"

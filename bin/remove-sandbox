@@ -34,7 +34,8 @@ if [ -d "$BIN_DIR" ]; then
 fi
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-HOOK_DIR="$SCRIPT_DIR/hooks"
+REPO_DIR=$(dirname "$SCRIPT_DIR")
+HOOK_DIR="$REPO_DIR/hooks"
 if [ -f "$HOOK_DIR/post-destroy.sh" ]; then
     "$HOOK_DIR/post-destroy.sh" "$PROFILE_NAME"
 fi

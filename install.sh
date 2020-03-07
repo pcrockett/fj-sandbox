@@ -23,10 +23,12 @@ if [ ! -d "$BIN_DIR" ]; then
     mkdir "$BIN_DIR"
 fi
 
-ln -s "$SCRIPT_DIR/new-sandbox" "$BIN_DIR/new-sandbox" || true
-ln -s "$SCRIPT_DIR/remove-sandbox" "$BIN_DIR/remove-sandbox" || true
-ln -s "$SCRIPT_DIR/get-clipboard" "$BIN_DIR/get-clipboard" || true
-ln -s "$SCRIPT_DIR/set-clipboard" "$BIN_DIR/set-clipboard" || true
-ln -s "$SCRIPT_DIR/mv-clipboard" "$BIN_DIR/mv-clipboard" || true
+ln -s "$SCRIPT_DIR/bin/new-sandbox" "$BIN_DIR/new-sandbox" || true
+ln -s "$SCRIPT_DIR/bin/remove-sandbox" "$BIN_DIR/remove-sandbox" || true
+ln -s "$SCRIPT_DIR/bin/get-clipboard" "$BIN_DIR/get-clipboard" || true
+ln -s "$SCRIPT_DIR/bin/set-clipboard" "$BIN_DIR/set-clipboard" || true
+ln -s "$SCRIPT_DIR/bin/mv-clipboard" "$BIN_DIR/mv-clipboard" || true
 
+echo "Symlinks in place."
 echo "Run \"new-sandbox <sandbox-name>\" to create new sandboxes."
+echo "Run \"remove-sandbox <sandbox-name>\" to destroy existing sandboxes."
