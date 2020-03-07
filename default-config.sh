@@ -8,3 +8,4 @@ set -Eeuo pipefail
 
 export FJSB_SCREEN_SIZE="800x600"
 export FJSB_SANDBOX_ROOT=~/sandboxes
+export FJSB_NET="eth0"

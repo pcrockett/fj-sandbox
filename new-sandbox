@@ -117,6 +117,7 @@ private \${HOME}/sandboxes/$PROFILE_NAME
 whitelist \${RUNUSER}/__not-used__
 
 # X11 sandboxing should always come last
+net $FJSB_NET
 xephyr-screen $FJSB_SCREEN_SIZE
 x11
 EOF
