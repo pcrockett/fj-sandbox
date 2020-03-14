@@ -28,6 +28,7 @@ ln -s "$SCRIPT_DIR/bin/remove-sandbox" "$BIN_DIR/remove-sandbox" || true
 ln -s "$SCRIPT_DIR/bin/get-clipboard" "$BIN_DIR/get-clipboard" || true
 ln -s "$SCRIPT_DIR/bin/set-clipboard" "$BIN_DIR/set-clipboard" || true
 ln -s "$SCRIPT_DIR/bin/mv-clipboard" "$BIN_DIR/mv-clipboard" || true
+ln -s "$SCRIPT_DIR/bin/clear-clipboard" "$BIN_DIR/clear-clipboard" || true
 
 echo "Symlinks in place."
 echo "Run \"new-sandbox <sandbox-name>\" to create new sandboxes."

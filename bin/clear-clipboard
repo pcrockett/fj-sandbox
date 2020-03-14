@@ -18,6 +18,4 @@ set -Eeuo pipefail
 
 SANDBOX_NAME="$1"
 
-# Grab the contents of the sandbox clipboard and then clear the clipboard
-firejail --quiet --join="$SANDBOX_NAME" xsel --clipboard &&
-    clear-clipboard "$SANDBOX_NAME"
+firejail --quiet --join="$SANDBOX_NAME" xsel --clipboard --clear
