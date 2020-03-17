@@ -16,6 +16,6 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-PROFILE_NAME="$1"
-
 # Rename this file to post-destroy.sh and add logic here
+
+echo "The sandbox being destroyed is: $FJSB_SANDBOX_NAME"

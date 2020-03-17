@@ -16,7 +16,7 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-PROFILE_NAME="$1"
+SANDBOX_NAME="$1"
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 REPO_DIR=$(dirname "$SCRIPT_DIR")
 
@@ -34,7 +34,7 @@ if [ ! -d "$FJSB_SANDBOX_ROOT" ]; then
     mkdir "$FJSB_SANDBOX_ROOT"
 fi
 
-SANDBOX_HOME="$FJSB_SANDBOX_ROOT/$PROFILE_NAME"
+SANDBOX_HOME="$FJSB_SANDBOX_ROOT/$SANDBOX_NAME"
 if [ -d "$SANDBOX_HOME" ]; then
     echo "$SANDBOX_HOME already exists."
     exit 1
@@ -48,7 +48,7 @@ if [ ! -d "$FJ_CONFIG" ]; then
     mkdir "$FJ_CONFIG"
 fi
 
-FJ_PROFILE="$FJ_CONFIG/$PROFILE_NAME.profile"
+FJ_PROFILE="$FJ_CONFIG/$SANDBOX_NAME.profile"
 if [ -f "$FJ_PROFILE" ]; then
     echo "$FJ_PROFILE already exists."
     exit 1
@@ -107,9 +107,9 @@ private-tmp
 read-only /nix
 
 machine-id
-hostname $PROFILE_NAME
+hostname $SANDBOX_NAME
 
-private \${HOME}/sandboxes/$PROFILE_NAME
+private \${HOME}/sandboxes/$SANDBOX_NAME
 
 # /run/user/USERID is used for a lot of IPC - VSCodium being the chief example.
 # Whitelisting some random file in this directory will cause the sandbox to see
@@ -130,7 +130,7 @@ if [ ! -d "$BIN_DIR" ]; then
     mkdir "$BIN_DIR"
 fi
 
-PROFILE_SCRIPT="$BIN_DIR/start-$PROFILE_NAME"
+PROFILE_SCRIPT="$BIN_DIR/start-$SANDBOX_NAME"
 if [ -f "$PROFILE_SCRIPT" ]; then
     echo "$PROFILE_SCRIPT already exists."
     exit 1
@@ -155,7 +155,7 @@ set -Eeuo pipefail
 
 [[ "\${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-firejail "--profile=$PROFILE_NAME" "--name=$PROFILE_NAME" openbox &
+firejail "--profile=$SANDBOX_NAME" "--name=$SANDBOX_NAME" openbox &
 EOF
 
 chmod u+x "$PROFILE_SCRIPT"
@@ -165,14 +165,16 @@ echo "Created $PROFILE_SCRIPT"
 HOOK_DIR="$REPO_DIR/hooks"
 
 if [ -f "$HOOK_DIR/post-create.sh" ]; then
-    "$HOOK_DIR/post-create.sh" "$PROFILE_NAME"
+    FJSB_SANDBOX_HOME="$SANDBOX_HOME" \
+        FJSB_SANDBOX_NAME="$SANDBOX_NAME" \
+        "$HOOK_DIR/post-create.sh"
 fi
 
 echo ""
 echo "-------------------------------------------------------------"
 echo ""
 echo "Profile created successfully."
-echo "Run start-$PROFILE_NAME to start the sandbox."
+echo "Run start-$SANDBOX_NAME to start the sandbox."
 echo ""
 echo "-------------------------------------------------------------"
 echo ""

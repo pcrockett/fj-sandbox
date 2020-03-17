@@ -16,7 +16,7 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-PROFILE_NAME="$1"
-PROFILE_HOME=~/sandboxes/$PROFILE_NAME
-
 # Rename this file to post-create.sh and add logic here
+
+echo "New sandbox name is: $FJSB_SANDBOX_NAME"
+echo "New sandbox home is: $FJSB_SANDBOX_HOME"
