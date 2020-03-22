@@ -180,6 +180,13 @@ set -Eeuo pipefail
 
 [[ "\${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
+PRE_START_SCRIPT="$REPO_DIR/hooks/pre-start.sh"
+if [ -f "\$PRE_START_SCRIPT" ]; then
+    FJSB_SANDBOX_NAME="$SANDBOX_NAME" \\
+        FJSB_SANDBOX_HOME="$SANDBOX_HOME" \\
+        bash "\$PRE_START_SCRIPT"
+fi
+
 firejail "--profile=$SANDBOX_NAME" "--name=$SANDBOX_NAME" openbox &
 EOF
 
