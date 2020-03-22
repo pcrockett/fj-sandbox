@@ -45,7 +45,15 @@ if [ -d "$SANDBOX_HOME" ]; then
     exit 1
 fi
 
-mkdir "$SANDBOX_HOME"
+HOME_TEMPLATE_DIR="$REPO_DIR/home-template"
+if [ -d "$HOME_TEMPLATE_DIR" ]; then
+    cp --recursive --dereference "$HOME_TEMPLATE_DIR" "$SANDBOX_HOME"
+    # --dereference because we want to allow the user to add symbolic links
+    # to the template home directory. However we don't want sandboxed
+    # applications to link to files outside the sandbox.
+else
+    mkdir "$SANDBOX_HOME"
+fi
 echo "Created $SANDBOX_HOME"
 
 FJ_CONFIG_DIR=~/.config/firejail

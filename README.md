@@ -75,7 +75,6 @@ There are a couple hook script templates in the hooks directory. These enable yo
 Features I Might Add Later
 --------------------------
 
-* Template home directory
 * Script to mount USB drives for sandboxes
 * `--help` usage messages for scripts, and perhaps a few options for a few scripts
 * Script for file transfer between sandboxes (similar to clipboard-sharing scripts)
