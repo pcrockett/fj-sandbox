@@ -23,12 +23,19 @@ if [ ! -d "$BIN_DIR" ]; then
     mkdir "$BIN_DIR"
 fi
 
-ln -s "$SCRIPT_DIR/bin/new-sandbox" "$BIN_DIR/new-sandbox" || true
-ln -s "$SCRIPT_DIR/bin/remove-sandbox" "$BIN_DIR/remove-sandbox" || true
-ln -s "$SCRIPT_DIR/bin/get-clipboard" "$BIN_DIR/get-clipboard" || true
-ln -s "$SCRIPT_DIR/bin/set-clipboard" "$BIN_DIR/set-clipboard" || true
-ln -s "$SCRIPT_DIR/bin/mv-clipboard" "$BIN_DIR/mv-clipboard" || true
-ln -s "$SCRIPT_DIR/bin/clear-clipboard" "$BIN_DIR/clear-clipboard" || true
+SCRIPTS_TO_INSTALL=(
+    "new-sandbox"
+    "remove-sandbox"
+    "get-clipboard"
+    "set-clipboard"
+    "mv-clipboard"
+    "clear-clipboard"
+    "install-fjsb-plugin"
+)
+
+for script in "${SCRIPTS_TO_INSTALL[@]}"; do
+    ln --symbolic "$SCRIPT_DIR/bin/$script" "$BIN_DIR/$script" || true
+done
 
 echo "Symlinks in place."
 echo "Run \"new-sandbox <sandbox-name>\" to create new sandboxes."

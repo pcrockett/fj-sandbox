@@ -187,6 +187,24 @@ if [ -f "\$PRE_START_SCRIPT" ]; then
         bash "\$PRE_START_SCRIPT"
 fi
 
+PLUGINS_FILE="$REPO_DIR/plugins.txt"
+if [ -f "\$PLUGINS_FILE" ]; then
+
+    # https://stackoverflow.com/a/1521498
+    while IFS= read -r plugin_dir
+    do
+
+        pre_start_hook="\$plugin_dir/hooks/pre-start.sh"
+        if [ -e "\$pre_start_hook" ]; then
+            FJSB_SANDBOX_HOME="$SANDBOX_HOME" \\
+                FJSB_SANDBOX_NAME="$SANDBOX_NAME" \\
+                "\$pre_start_hook"
+        fi
+
+    done < "\$PLUGINS_FILE"
+
+fi
+
 firejail "--profile=$SANDBOX_NAME" "--name=$SANDBOX_NAME" openbox &
 EOF
 
@@ -201,6 +219,24 @@ if [ -f "$HOOK_DIR/post-create.sh" ]; then
     FJSB_SANDBOX_HOME="$SANDBOX_HOME" \
         FJSB_SANDBOX_NAME="$SANDBOX_NAME" \
         "$HOOK_DIR/post-create.sh"
+fi
+
+PLUGINS_FILE="$REPO_DIR/plugins.txt"
+if [ -f "$PLUGINS_FILE" ]; then
+
+    # https://stackoverflow.com/a/1521498
+    while IFS= read -r plugin_dir
+    do
+
+        post_create_hook="$plugin_dir/hooks/post-create.sh"
+        if [ -e "$post_create_hook" ]; then
+            FJSB_SANDBOX_HOME="$SANDBOX_HOME" \
+                FJSB_SANDBOX_NAME="$SANDBOX_NAME" \
+                "$post_create_hook"
+        fi
+
+    done < "$PLUGINS_FILE"
+
 fi
 
 echo ""

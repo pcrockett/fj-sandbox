@@ -57,3 +57,20 @@ if [ -f "$HOOK_DIR/post-destroy.sh" ]; then
         "$HOOK_DIR/post-destroy.sh"
 
 fi
+
+PLUGINS_FILE="$REPO_DIR/plugins.txt"
+if [ -f "$PLUGINS_FILE" ]; then
+
+    # https://stackoverflow.com/a/1521498
+    tac "$PLUGINS_FILE" | while IFS= read -r plugin_dir
+    do
+
+        post_destroy_hook="$plugin_dir/hooks/post-destroy.sh"
+        if [ -e "$post_destroy_hook" ]; then
+            FJSB_SANDBOX_NAME="$SANDBOX_NAME" \
+                "$post_destroy_hook"
+        fi
+
+    done
+
+fi

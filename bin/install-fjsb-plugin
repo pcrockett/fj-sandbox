@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# This script is based on the template here:
+#
+#     https://gist.github.com/pcrockett/8e04641f8473081c3a93de744873f787
+#
+# It was copy/pasted here into this file and then modified extensively.
+#
+# Useful links when writing a script:
+#
+# Shellcheck: https://github.com/koalaman/shellcheck
+# vscode-shellcheck: https://github.com/timonwong/vscode-shellcheck
+# https://blog.yossarian.net/2020/01/23/Anybody-can-write-good-bash-with-a-little-effort
+#
+
+# https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+
+[[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
+
+function panic {
+    >&2 echo "Fatal: $*"
+    exit 1
+}
+
+function usage_and_exit() {
+    >&2 echo "Usage: install-fjsb-plugin <plugin-path>"
+    exit 1
+}
+
+function is_set() {
+    test ! -z "$1"
+}
+
+is_set "${1+x}" || usage_and_exit
+
+PLUGIN_DIR="$(readlink -f "$1")"
+
+INSTALL_SCRIPT="$PLUGIN_DIR/install.sh"
+if [ -e "$INSTALL_SCRIPT" ]; then
+    "$INSTALL_SCRIPT"
+fi
+
+# https://stackoverflow.com/a/1482133/138757
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+REPO_DIR=$(dirname "$SCRIPT_DIR")
+PLUGINS_FILE="$REPO_DIR/plugins.txt"
+
+echo "$PLUGIN_DIR" >> "$PLUGINS_FILE"

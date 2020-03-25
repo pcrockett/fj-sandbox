@@ -72,7 +72,7 @@ I am pretty new to Firejail, and certainly no Linux expert. After creating a new
 Hooks
 -----
 
-There are a couple hook script templates in the hooks directory. These enable you to automatically initialize any new sandboxes you create, and clean things up when sandboxes are destroyed.
+There are a couple hook script templates in the hooks directory. These enable you to automatically initialize any new sandboxes you create, set things up before they start running, and clean things up when sandboxes are destroyed.
 
 Features I Might Add Later
 --------------------------
