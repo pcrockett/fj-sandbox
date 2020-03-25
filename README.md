@@ -74,12 +74,15 @@ Hooks
 
 There are a couple hook script templates in the hooks directory. These enable you to automatically initialize any new sandboxes you create, set things up before they start running, and clean things up when sandboxes are destroyed.
 
-Features I Might Add Later
---------------------------
+Plugins
+-------
 
-* `--help` usage messages for scripts, and perhaps a few options for a few scripts
-* Nix package manager integration (I'm currently using personal hook scripts for this and it's pretty nifty)
-* Instead of an explicit Nix integration, perhaps a simple plugin system that allows for a separate Nix plugin to be developed
+You can use plugins to add functionality. As of this writing, I've created two plugins:
+
+* [fjsb-nix][5]: Install packages only for specific sandboxes
+* [fjsb-netbridge][6]: Route your sandbox traffic through a VPN or other network interface that firejail doesn't normally support.
+
+Plugins are easy to create. Feel free to create your own and add it to this list via a pull request.
 
 Troubleshooting
 ---------------
@@ -98,3 +101,5 @@ If Openbox captured your mouse and keyboard before you told it to exit, you'll b
 [2]: install.sh
 [3]: bin/new-sandbox
 [4]: default-config.sh
+[5]: https://github.com/pcrockett/fjsb-nix
+[6]: https://github.com/pcrockett/fjsb-netbridge
