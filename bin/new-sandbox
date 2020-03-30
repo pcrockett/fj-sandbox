@@ -72,25 +72,20 @@ if [ -f "$FJ_PROFILE_LINK" ]; then
     echo "$FJ_PROFILE_LINK already exists."
 fi
 
+function get_dns() {
+    for dns in "${FJSB_DNS[@]}"; do
+        echo "dns $dns"
+    done
+}
+
+DNS_SETTINGS=$(get_dns)
+
 cat > "$FJ_PROFILE" << EOF
-# Copy/paste/modified from firejail's default.profile
 
-# Persistent local customizations
-include default.local
-# Persistent global definitions
-include globals.local
+# settings that will probably be consistent among all sandboxes:
+include $REPO_DIR/fjsb-global.inc
 
-# generic gui profile
-# depending on your usage, you can enable some of the commands below:
-
-noblacklist \${HOME}/.config/openbox
-
-include disable-common.inc
-# include disable-devel.inc
-# include disable-interpreters.inc
-include disable-passwdmgr.inc
-# include disable-programs.inc
-# include disable-xdg.inc
+# these settings you may want to tweak on a per-sandbox basis:
 
 caps.drop all
 ipc-namespace
@@ -120,20 +115,13 @@ private-dev
 private-tmp
 
 # memory-deny-write-execute
-# noexec /home/phil
 # noexec /tmp
-read-only /nix
 
-machine-id
 hostname $SANDBOX_NAME
 
-private \${HOME}/sandboxes/$SANDBOX_NAME
+$DNS_SETTINGS
 
-# /run/user/USERID is used for a lot of IPC - VSCodium being the chief example.
-# Whitelisting some random file in this directory will cause the sandbox to see
-# an empty directory. If some program inside the sandbox ever writes to this
-# directory, those files will only be visible to the sandbox.
-whitelist \${RUNUSER}/__not-used__
+private \${HOME}/sandboxes/$SANDBOX_NAME
 
 # X11 sandboxing should always come last
 net $FJSB_NET
