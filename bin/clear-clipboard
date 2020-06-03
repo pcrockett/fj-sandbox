@@ -16,6 +16,78 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-SANDBOX_NAME="$1"
+readonly SCRIPT_NAME=$(basename "$0")
+readonly DEPENDENCIES=(xsel)
 
-firejail --quiet --join="$SANDBOX_NAME" xsel --clipboard --clear
+function panic() {
+    >&2 echo "Fatal: $*"
+    exit 1
+}
+
+function installed() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+for dep in "${DEPENDENCIES[@]}"; do
+    installed "${dep}" || panic "Missing '${dep}'"
+done
+
+function show_usage() {
+    printf "Usage: %s [SANDBOX_NAME]\n" "${SCRIPT_NAME}" >&2
+    printf "  -h, --help\t\tShow this help message then exit\n" >&2
+}
+
+function show_usage_and_exit() {
+    show_usage
+    exit 1
+}
+
+function is_set() {
+    # Use this like so:
+    #
+    #     is_set "${VAR_NAME+x}" || show_usage_and_exit
+    #
+    # https://stackoverflow.com/a/13864829
+
+    test ! -z "$1"
+}
+
+function parse_commandline() {
+
+    while [ "$#" -gt "0" ]; do
+        local consume=1
+
+        case "$1" in
+            -h|-\?|--help)
+                ARG_HELP="true"
+            ;;
+            -*)
+                echo "Unrecognized argument: ${1}"
+                show_usage_and_exit
+            ;;
+            *)
+                if is_set "${ARG_SANDBOX_NAME+x}"; then
+                    echo "Unrecognized argument: ${1}"
+                    show_usage_and_exit
+                else
+                    ARG_SANDBOX_NAME="${1}"
+                fi
+            ;;
+        esac
+
+        shift ${consume}
+    done
+}
+
+parse_commandline "$@"
+
+if is_set "${ARG_HELP+x}"; then
+    show_usage_and_exit
+fi;
+
+if is_set "${ARG_SANDBOX_NAME+x}"; then
+    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard --clear
+else
+    echo "Sandbox name expected."
+    show_usage_and_exit
+fi;
