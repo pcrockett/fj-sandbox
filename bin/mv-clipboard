@@ -52,10 +52,6 @@ function is_set() {
     test ! -z "$1"
 }
 
-function is_not_set() {
-    test -z "$1"
-}
-
 function parse_commandline() {
 
     while [ "$#" -gt "0" ]; do
@@ -93,14 +89,9 @@ if is_set "${ARG_HELP+x}"; then
     show_usage_and_exit
 fi;
 
-if is_not_set "${ARG_SRC_SANDBOX_NAME+x}"; then
-    echo "Expected source and dest sandbox name."
+if is_set "${ARG_SRC_SANDBOX_NAME+x}" && is_set "${ARG_DST_SANDBOX_NAME+x}"; then
+    get-clipboard --clear "$ARG_SRC_SANDBOX_NAME" | set-clipboard "$ARG_DST_SANDBOX_NAME"
+else
+    echo "Expected source and destination sandbox names."
     show_usage_and_exit
 fi
-
-if is_not_set "${ARG_DST_SANDBOX_NAME+x}"; then
-    echo "Expected dest sandbox name."
-    show_usage_and_exit
-fi
-
-get-clipboard --clear "$ARG_SRC_SANDBOX_NAME" | set-clipboard "$ARG_DST_SANDBOX_NAME"
