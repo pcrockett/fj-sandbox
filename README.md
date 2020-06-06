@@ -44,7 +44,7 @@ You can also share clipboard content between sandboxes. In a non-sandboxed termi
 # Move contents of "personal" clipboard to "work" clipboard:
 mv-clipboard personal work
 
-# Move contents of "personal" clipboard to host clipboard
+# Copy contents of "personal" clipboard to host clipboard
 get-clipboard personal | set-clipboard --host
 
 # Copy contents of host clipboard to "personal" clipboard
