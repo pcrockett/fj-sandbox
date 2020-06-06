@@ -16,20 +16,81 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
-SANDBOX_NAME="$1"
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-REPO_DIR=$(dirname "$SCRIPT_DIR")
-CONFIG_DIR="$REPO_DIR/config"
+readonly SCRIPT_NAME=$(basename "$0")
+readonly SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+readonly REPO_DIR=$(dirname "$SCRIPT_DIR")
+readonly CONFIG_DIR="$REPO_DIR/config"
+
+function panic() {
+    >&2 echo "Fatal: $*"
+    exit 1
+}
+
+function is_set() {
+    # Use this like so:
+    #
+    #     is_set "${VAR_NAME+x}" || show_usage_and_exit
+    #
+    # https://stackoverflow.com/a/13864829
+
+    test ! -z "$1"
+}
+
+function show_usage() {
+    printf "Usage: %s [OPTION...] [SANDBOX_NAME]\n" "${SCRIPT_NAME}" >&2
+    printf "  -h, --help\t\tShow this help message then exit\n" >&2
+}
+
+function show_usage_and_exit() {
+    show_usage
+    exit 1
+}
+
+function parse_commandline() {
+
+    while [ "$#" -gt "0" ]; do
+        local consume=1
+
+        case "$1" in
+            -h|-\?|--help)
+                ARG_HELP="true"
+            ;;
+            -*)
+                echo "Unrecognized argument: ${1}"
+                show_usage_and_exit
+            ;;
+            *)
+                if is_set "${ARG_SANDBOX_NAME+x}"; then
+                    echo "Unrecognized argument: ${1}"
+                    show_usage_and_exit
+                else
+                    ARG_SANDBOX_NAME="${1}"
+                fi
+            ;;
+        esac
+
+        shift ${consume}
+    done
+}
+
+parse_commandline "$@"
+
+if is_set "${ARG_HELP+x}"; then
+    show_usage_and_exit
+fi;
+
+is_set "${ARG_SANDBOX_NAME+x}" || panic "Sandbox name expected."
+readonly SANDBOX_NAME="$ARG_SANDBOX_NAME"
 
 if [ ! -d "$CONFIG_DIR" ]; then
     mkdir "$CONFIG_DIR"
 fi
 
-DEFAULT_CONFIG="$REPO_DIR/default-config.sh"
+readonly DEFAULT_CONFIG="$REPO_DIR/default-config.sh"
 # shellcheck source=/dev/null
 . "$DEFAULT_CONFIG"
 
-USER_CONFIG="$REPO_DIR/user-config.sh"
+readonly USER_CONFIG="$REPO_DIR/user-config.sh"
 if [ -e "$USER_CONFIG" ]; then
     # shellcheck source=/dev/null
     . "$USER_CONFIG"
@@ -39,13 +100,13 @@ if [ ! -d "$FJSB_SANDBOX_ROOT" ]; then
     mkdir "$FJSB_SANDBOX_ROOT"
 fi
 
-SANDBOX_HOME="$FJSB_SANDBOX_ROOT/$SANDBOX_NAME"
+readonly SANDBOX_HOME="$FJSB_SANDBOX_ROOT/$SANDBOX_NAME"
 if [ -d "$SANDBOX_HOME" ]; then
     echo "$SANDBOX_HOME already exists."
     exit 1
 fi
 
-HOME_TEMPLATE_DIR="$REPO_DIR/home-template"
+readonly HOME_TEMPLATE_DIR="$REPO_DIR/home-template"
 if [ -d "$HOME_TEMPLATE_DIR" ]; then
     cp --recursive --dereference "$HOME_TEMPLATE_DIR" "$SANDBOX_HOME"
     # --dereference because we want to allow the user to add symbolic links
@@ -56,18 +117,18 @@ else
 fi
 echo "Created $SANDBOX_HOME"
 
-FJ_CONFIG_DIR=~/.config/firejail
+readonly FJ_CONFIG_DIR=~/.config/firejail
 if [ ! -d "$FJ_CONFIG_DIR" ]; then
     mkdir "$FJ_CONFIG_DIR"
 fi
 
-FJ_PROFILE="$CONFIG_DIR/$SANDBOX_NAME.profile"
+readonly FJ_PROFILE="$CONFIG_DIR/$SANDBOX_NAME.profile"
 if [ -f "$FJ_PROFILE" ]; then
     echo "$FJ_PROFILE already exists."
     exit 1
 fi
 
-FJ_PROFILE_LINK="$FJ_CONFIG_DIR/$SANDBOX_NAME.profile"
+readonly FJ_PROFILE_LINK="$FJ_CONFIG_DIR/$SANDBOX_NAME.profile"
 if [ -f "$FJ_PROFILE_LINK" ]; then
     echo "$FJ_PROFILE_LINK already exists."
 fi
@@ -78,7 +139,7 @@ function get_dns() {
     done
 }
 
-DNS_SETTINGS=$(get_dns)
+readonly DNS_SETTINGS=$(get_dns)
 
 cat > "$FJ_PROFILE" << EOF
 
@@ -132,18 +193,18 @@ EOF
 ln --symbolic "$FJ_PROFILE" "$FJ_PROFILE_LINK"
 echo "Created $FJ_PROFILE"
 
-BIN_DIR=~/.local/bin
+readonly BIN_DIR=~/.local/bin
 if [ ! -d "$BIN_DIR" ]; then
     mkdir "$BIN_DIR"
 fi
 
-PROFILE_SCRIPT="$CONFIG_DIR/start-$SANDBOX_NAME"
+readonly PROFILE_SCRIPT="$CONFIG_DIR/start-$SANDBOX_NAME"
 if [ -f "$PROFILE_SCRIPT" ]; then
     echo "$PROFILE_SCRIPT already exists."
     exit 1
 fi
 
-PROFILE_SCRIPT_LINK="$BIN_DIR/start-$SANDBOX_NAME"
+readonly PROFILE_SCRIPT_LINK="$BIN_DIR/start-$SANDBOX_NAME"
 if [ -f "$PROFILE_SCRIPT_LINK" ]; then
     echo "$PROFILE_SCRIPT_LINK already exists."
     exit 1
@@ -201,7 +262,7 @@ ln --symbolic "$PROFILE_SCRIPT" "$PROFILE_SCRIPT_LINK"
 
 echo "Created $PROFILE_SCRIPT"
 
-HOOK_DIR="$REPO_DIR/hooks"
+readonly HOOK_DIR="$REPO_DIR/hooks"
 
 if [ -f "$HOOK_DIR/post-create.sh" ]; then
     FJSB_SANDBOX_HOME="$SANDBOX_HOME" \
@@ -209,7 +270,7 @@ if [ -f "$HOOK_DIR/post-create.sh" ]; then
         "$HOOK_DIR/post-create.sh"
 fi
 
-PLUGINS_FILE="$REPO_DIR/plugins.txt"
+readonly PLUGINS_FILE="$REPO_DIR/plugins.txt"
 if [ -f "$PLUGINS_FILE" ]; then
 
     # https://stackoverflow.com/a/1521498
