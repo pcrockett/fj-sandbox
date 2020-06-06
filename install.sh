@@ -29,7 +29,6 @@ SCRIPTS_TO_INSTALL=(
     "get-clipboard"
     "set-clipboard"
     "mv-clipboard"
-    "clear-clipboard"
     "install-fjsb-plugin"
 )
 
