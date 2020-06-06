@@ -33,7 +33,7 @@ for dep in "${DEPENDENCIES[@]}"; do
 done
 
 function show_usage() {
-    printf "Usage: %s [OPTION...] [SANDBOX_NAME]\n" "${SCRIPT_NAME}" >&2
+    printf "Usage: %s [OPTION...] [SANDBOX_NAME | -H, --host]\n" "${SCRIPT_NAME}" >&2
     printf "  -c, --clear\t\tClear the sandbox clipboard after retrieving it\n" >&2
     printf "  -h, --help\t\tShow this help message then exit\n" >&2
 }
@@ -62,6 +62,14 @@ function parse_commandline() {
             -c|--clear)
                 ARG_CLEAR="true"
             ;;
+            -H|--host)
+                if is_set "${ARG_SANDBOX_NAME+x}"; then
+                    echo "Cannot use --host argument with a sandbox name (${ARG_SANDBOX_NAME})."
+                    show_usage_and_exit
+                else
+                    ARG_HOST="true"
+                fi
+            ;;
             -h|-\?|--help)
                 ARG_HELP="true"
             ;;
@@ -72,6 +80,9 @@ function parse_commandline() {
             *)
                 if is_set "${ARG_SANDBOX_NAME+x}"; then
                     echo "Unrecognized argument: ${1}"
+                    show_usage_and_exit
+                elif is_set "${ARG_HOST+x}"; then
+                    echo "Cannot use --host argument with a sandbox name (${1})."
                     show_usage_and_exit
                 else
                     ARG_SANDBOX_NAME="${1}"
@@ -89,13 +100,22 @@ if is_set "${ARG_HELP+x}"; then
     show_usage_and_exit
 fi
 
-if is_set "${ARG_SANDBOX_NAME+x}"; then
-    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard
-else
-    echo "Sandbox name expected."
-    show_usage_and_exit
-fi
+if is_set "${ARG_HOST+x}"; then
 
-if is_set "${ARG_CLEAR+x}"; then
-    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard --clear
+    xsel --clipboard
+
+    if is_set "${ARG_CLEAR+x}"; then
+        xsel --clipboard --clear
+    fi
+
+elif is_set "${ARG_SANDBOX_NAME+x}"; then
+    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard
+
+    if is_set "${ARG_CLEAR+x}"; then
+        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard --clear
+    fi
+
+else
+    echo "Sandbox name or \"--host\" expected."
+    show_usage_and_exit
 fi

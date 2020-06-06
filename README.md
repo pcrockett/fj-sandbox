@@ -45,10 +45,10 @@ You can also share clipboard content between sandboxes. In a non-sandboxed termi
 mv-clipboard personal work
 
 # Move contents of "personal" clipboard to host clipboard
-get-clipboard personal | xsel --clipboard
+get-clipboard personal | set-clipboard --host
 
 # Copy contents of host clipboard to "personal" clipboard
-xsel --clipboard | set-clipboard personal
+get-clipboard --host | set-clipboard personal
 ```
 
 It's also pretty easy to create temporary sandboxes:
