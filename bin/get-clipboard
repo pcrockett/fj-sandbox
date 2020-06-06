@@ -102,17 +102,17 @@ fi
 
 if is_set "${ARG_HOST+x}"; then
 
-    xsel --clipboard
+    xsel --nodetach --clipboard
 
     if is_set "${ARG_CLEAR+x}"; then
-        xsel --clipboard --clear
+        xsel --nodetach --clipboard --clear
     fi
 
 elif is_set "${ARG_SANDBOX_NAME+x}"; then
-    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard
+    firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --nodetach --clipboard
 
     if is_set "${ARG_CLEAR+x}"; then
-        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard --clear
+        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --nodetach --clipboard --clear
     fi
 
 else

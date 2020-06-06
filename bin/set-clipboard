@@ -103,17 +103,17 @@ fi
 if is_set "${ARG_HOST+x}"; then
 
     if is_set "${ARG_CLEAR+x}"; then
-        xsel --clipboard --clear
+        xsel --nodetach --clipboard --clear
     else
-        xsel --clipboard < /dev/stdin
+        xsel --nodetach --clipboard < /dev/stdin
     fi
 
 elif is_set "${ARG_SANDBOX_NAME+x}"; then
 
     if is_set "${ARG_CLEAR+x}"; then
-        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard --clear
+        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --nodetach --clipboard --clear
     else
-        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --clipboard < /dev/stdin
+        firejail --quiet --join="$ARG_SANDBOX_NAME" xsel --nodetach --clipboard < /dev/stdin
     fi
 
 else
