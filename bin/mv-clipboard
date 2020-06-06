@@ -87,7 +87,7 @@ parse_commandline "$@"
 
 if is_set "${ARG_HELP+x}"; then
     show_usage_and_exit
-fi;
+fi
 
 if is_set "${ARG_SRC_SANDBOX_NAME+x}" && is_set "${ARG_DST_SANDBOX_NAME+x}"; then
     get-clipboard --clear "$ARG_SRC_SANDBOX_NAME" | set-clipboard "$ARG_DST_SANDBOX_NAME"

@@ -73,7 +73,7 @@ parse_commandline "$@"
 
 if is_set "${ARG_HELP+x}"; then
     show_usage_and_exit
-fi;
+fi
 
 is_set "${ARG_PLUGIN_DIR+x}" || show_usage_and_exit
 

@@ -87,7 +87,7 @@ parse_commandline "$@"
 
 if is_set "${ARG_HELP+x}"; then
     show_usage_and_exit
-fi;
+fi
 
 if is_set "${ARG_SANDBOX_NAME+x}"; then
 
@@ -100,4 +100,4 @@ if is_set "${ARG_SANDBOX_NAME+x}"; then
 else
     echo "Sandbox name expected."
     show_usage_and_exit
-fi;
+fi
