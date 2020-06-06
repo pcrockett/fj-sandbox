@@ -66,6 +66,7 @@ function parse_commandline() {
                 ARG_HELP="true"
             ;;
             --)
+                # No more options to parse! Everything else is a command
                 shift 1
                 ARG_COMMAND="$*"
             ;;
@@ -75,6 +76,7 @@ function parse_commandline() {
             ;;
             *)
                 if is_set "${ARG_SANDBOX_NAME+x}"; then
+                    # Sandbox name has been specified, so everything after that is a command
                     ARG_COMMAND="$*"
                 else
                     ARG_SANDBOX_NAME="${1}"
@@ -95,7 +97,7 @@ fi
 is_set "${ARG_SANDBOX_NAME+x}" || panic "Sandbox name expected."
 
 if is_set "${ARG_COMMAND+x}"; then
-    firejail "--join=${ARG_SANDBOX_NAME}" "${ARG_COMMAND}"
+    firejail "--join=${ARG_SANDBOX_NAME}" -- "${ARG_COMMAND}"
 else
     firejail "--join=${ARG_SANDBOX_NAME}"
 fi
