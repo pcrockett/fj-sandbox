@@ -18,13 +18,23 @@ set -Eeuo pipefail
 
 [[ "${BASH_VERSINFO[0]}" -lt 4 ]] && echo "Bash >= 4 required" && exit 1
 
+readonly SCRIPT_NAME=$(basename "$0")
+readonly SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+readonly REPO_DIR=$(dirname "$SCRIPT_DIR")
+readonly PLUGINS_FILE="$REPO_DIR/plugins.txt"
+
 function panic {
     >&2 echo "Fatal: $*"
     exit 1
 }
 
-function usage_and_exit() {
-    >&2 echo "Usage: install-fjsb-plugin <plugin-path>"
+function show_usage() {
+    printf "Usage: %s [OPTION...] [PLUGIN_DIR]\n" "${SCRIPT_NAME}" >&2
+    printf "  -h, --help\t\tShow this help message then exit\n" >&2
+}
+
+function show_usage_and_exit() {
+    show_usage
     exit 1
 }
 
@@ -32,18 +42,49 @@ function is_set() {
     test ! -z "$1"
 }
 
-is_set "${1+x}" || usage_and_exit
+function parse_commandline() {
 
-PLUGIN_DIR="$(readlink -f "$1")"
+    while [ "$#" -gt "0" ]; do
+        local consume=1
 
-INSTALL_SCRIPT="$PLUGIN_DIR/install.sh"
+        case "$1" in
+            -h|-\?|--help)
+                ARG_HELP="true"
+            ;;
+            -*)
+                echo "Unrecognized argument: ${1}"
+                show_usage_and_exit
+            ;;
+            *)
+                if is_set "${ARG_PLUGIN_DIR+x}"; then
+                    echo "Unrecognized argument: ${1}"
+                    show_usage_and_exit
+                else
+                    ARG_PLUGIN_DIR="${1}"
+                fi
+            ;;
+        esac
+
+        shift ${consume}
+    done
+}
+
+parse_commandline "$@"
+
+if is_set "${ARG_HELP+x}"; then
+    show_usage_and_exit
+fi;
+
+is_set "${ARG_PLUGIN_DIR+x}" || show_usage_and_exit
+
+readonly PLUGIN_DIR="$(readlink -f "$ARG_PLUGIN_DIR")"
+if [ ! -d "$PLUGIN_DIR" ]; then
+    panic "$PLUGIN_DIR does not exist."
+fi
+
+readonly INSTALL_SCRIPT="$PLUGIN_DIR/install.sh"
 if [ -e "$INSTALL_SCRIPT" ]; then
     "$INSTALL_SCRIPT"
 fi
-
-# https://stackoverflow.com/a/1482133/138757
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-REPO_DIR=$(dirname "$SCRIPT_DIR")
-PLUGINS_FILE="$REPO_DIR/plugins.txt"
 
 echo "$PLUGIN_DIR" >> "$PLUGINS_FILE"
