@@ -89,7 +89,7 @@ Troubleshooting
 
 **A sandbox has captured my mouse and keyboard!**
 
-When you hit Ctrl + Shift, Openbox captures your mouse and keyboard so it can't leave the Openbox window. Just hit Ctrl + Shift again and you'll be allowed to escape. There might be a couple seconds of lag between when you hit Ctrl + Shift and when your mouse and keyboard are actually released. Also, I haven't figured out why yet, but occasionally it requires multiple attempts.
+When you hit Ctrl + Shift, Openbox captures your mouse and keyboard so it can't leave the Openbox window. Just hit Ctrl + Shift again and you'll be allowed to escape. Though I have discovered this doesn't necessarily work immediately. If your mouse and keyboard remain captured inside the sandbox after hitting Ctrl + Shift, generate some window activity by moving some windows around. Then you should be able to escape.
 
 **I told Openbox to exit, but the window won't go away.**
 
