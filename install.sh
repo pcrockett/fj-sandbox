@@ -30,6 +30,7 @@ SCRIPTS_TO_INSTALL=(
     "set-clipboard"
     "mv-clipboard"
     "install-fjsb-plugin"
+    "attach-sandbox"
 )
 
 for script in "${SCRIPTS_TO_INSTALL[@]}"; do

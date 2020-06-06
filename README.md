@@ -34,7 +34,7 @@ start-work
 This runs an instance of Openbox for both the _personal_ and _work_ sandboxes, with their own private home directories, sandboxed from the rest of the system. There are two ways to launch applications inside sandboxes:
 
 * Right-click anywhere in the Openbox window and use the menu
-* Run `firejail --join=<sandbox-name> <app>` (for example, `firejail --join=personal firefox`)
+* Run `attach-sandbox <sandbox-name> [command]` (for example, `attach-sandbox personal firefox`)
 
 Each sandbox has a dedicated home directory found at `~/sandboxes/<sandbox-name>`. Moving files between sandboxes is as easy as moving the file from one directory to another.
 
