@@ -33,7 +33,7 @@ for dep in "${DEPENDENCIES[@]}"; do
 done
 
 function show_usage() {
-    printf "Usage: %s [OPTION...] [SANDBOX_NAME | -H, --host]\n" "${SCRIPT_NAME}" >&2
+    printf "Usage: %s [OPTION...] <SANDBOX_NAME | -H, --host>\n" "${SCRIPT_NAME}" >&2
     printf "  -c, --clear\t\tClear the sandbox clipboard after retrieving it\n" >&2
     printf "  -h, --help\t\tShow this help message then exit\n" >&2
 }
